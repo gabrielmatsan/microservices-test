@@ -7,5 +7,34 @@ services:
     volumes:
       - ./docker/rabbitmq:/var/lib/rabbitmq
 
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    ports:
+      - "5775:5775/udp" # Zipkin thrift compact
+      - "6831:6831/udp" # Traces
+      - "6832:6832/udp" # Jaeger agent binary thrift
+      - "16686:16686" # Jaeger UI
+      - "14268:14268" # Jaeger collector HTTP endpoint
+      - "4317:4317" # Jaeger gRPC endpoint
+      - "4318:4318" # Jaeger OpenTelemetry endpoint
+
+  api_gateway:
+    image: kong:3.9
+    environment:
+      KONG_DATABASE: 'off'
+      KONG_ADMIN_LISTEN: '0.0.0.0:8001'
+      KONG_ADMIN_GUI_URL: http://localhost:8002
+      KONG_DECLARATIVE_CONFIG: /kong/config.yaml
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # For local development
+    volumes:
+      - './docker/kong/config.yaml:/kong/config.yaml'
+    ports:
+      - "8000:8000" # Proxy
+      - "8001:8001" # Admin API
+      - "8002:8002" # Admin API (UI)
+      - "8443:8443" # Proxy (SSL->HTTPS)
+      - "8444:8444" # Admin API (SSL->HTTPS)
+
 volumes:
   rabbitmq_data:
