@@ -1,4 +1,5 @@
 import { fastifyCors } from "@fastify/cors";
+import "@opentelemetry/auto-instrumentations-node/register";
 import { fastify } from "fastify";
 import {
   serializerCompiler,
