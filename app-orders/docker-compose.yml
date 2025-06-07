@@ -1,13 +1,11 @@
 services:
   pg:
     image: bitnami/postgresql:latest
-    container_name: app-orders-postgres
-    environment:
-      POSTGRES_USER: docker
-      POSTGRES_PASSWORD: docker
-      POSTGRES_DB: orders
     ports:
       - "5482:5432"
-
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=orders
     volumes:
-      - ./docker/:docker-entrypoint-initdb.d
+      - ./docker:/docker-entrypoint-initdb.d
